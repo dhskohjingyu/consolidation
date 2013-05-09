@@ -5,10 +5,10 @@ class Queue():
     def enqueue(item):
         self.__items.append(item)
 
-    def dequeue():
+    def dequeue(self):
         self.__items.pop(-1)
 
-    def display():
+    def display(self):
         print(self.__items)
 
 q = Queue()
