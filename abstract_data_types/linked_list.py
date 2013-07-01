@@ -38,7 +38,7 @@ class LinkedList():
 
         while count < index:
             previous_node = node
-            node = self.__head.get_pointer()
+            node = node.get_pointer()
             count += 1
 
         if node == None:
@@ -56,7 +56,7 @@ class LinkedList():
                 # removing the tail
                 self.__tail = previous_node
             else:
-                previous_node.set_pointer(None)
+                previous_node.set_pointer(next_node)
                 
             node = None
 
@@ -70,7 +70,9 @@ class LinkedList():
 l = LinkedList()
 l.add_value(2)
 l.add_value(3)
+l.add_value(4)
 l.add_value(5)
+l.add_value(6)
 l.display()
 print("--------")
 l.remove_node(2)
