@@ -1,106 +1,109 @@
-class BinaryNode():
+class BST(object):
+    ''' binary search tree class '''
+
     def __init__(self, value):
-        self.__value = value
-        self.__left = None
-        self.__right = None
+        self.value = value
+        self.left = None
+        self.right = None
 
-    def get_value(self):
-        return self.__value
-
-    def set_value(self, new_value):
-        self.__value = new_value
-
-    def get_left(self):
-        return self.__left
-
-    def set_left(self, new_left):
-        self.__left = new_left
-
-    def get_right(self):
-        return self.__right
-
-    def set_right(self, new_right):
-        self.__right = new_right
-
-class BinaryTree():
-    def __init__(self):
-        self.__root = None
-
-    def insert_value(self, value):
-        new = BinaryNode(value)
-        
-        if self.__root == None:
-            self.__root = new
+    def insert(self, value):
+        if value > self.value:
+            # insert to right
+            if self.right == None:
+                self.right = BST(value)
+            else:
+                self.right.insert(value)
         else:
-            current_node = self.__root
-            inserted = False
+            # insert to left
+            if self.left == None:
+                self.left = BST(value)
+            else:
+                self.left.insert(value)
 
-            while not inserted:
-                if current_node == None:
-                    current_node = new
+    def lookup(self, value, parent=None):
+        if self.value == value:
+            return self, parent
+        else:
+            if value > self.value:
+                # node is on the right subtree
+                if self.right != None:
+                    return self.right.lookup(value, self)
                 else:
-                    # value less than current_node value
-                    if current_node.get_value() < value:
-                        if current_node.get_left() == None:
-                            current_node.set_left(new)
-                            inserted = True
-                        else:
-                            current_node = current_node.get_left()
-                    else:
-                        # value more than current_node value
-                        if current_node.get_right() ==  None:
-                            current_node.set_right(new)
-                            inserted = True
-                        else:
-                            current_node = current_node.get_right()
+                    return None
+            else:
+                # node is on left subtree
+                if self.left != None:
+                    return self.left.lookup(value, self)
+                else:
+                    return None
+    def get_smallest(self):
+        ''' returns the child with the largest value '''
+        if self.left == None:
+            return self
+        else:
+            return self.left.get_smallest()
 
-    def pre_order_print(self):
-        self.pre_order(self.__root)
+    def get_largest(self):
+        ''' returns the child with the largest value '''
+        if self.right == None:
+            return self
+        else:
+            return self.right.get_largest()
 
-    def pre_order(self, node):
-        # root L R
-        print(node.get_value())
+    def remove(self, value):
+        ''' removes a node from this tree '''
+        node_to_remove, parent = self.lookup(value)
 
-        if node.get_left() != None:
-            self.pre_order(node.get_left())
+        # no children, just remove
+        if node_to_remove.left == None and node_to_remove.right == None:
+            if parent.left == node_to_remove:
+                parent.left = None
+            elif parent.right == node_to_remove:
+                parent.right = None
+        # two subtrees
+        elif node_to_remove.left != None and node_to_remove.right != None:
+            # replace with smallest node on right subtree
+            successor = node_to_remove.right.get_smallest()
+            successor.left = node_to_remove.left
+            successor.right = None
 
-        if node.get_right() != None:
-            self.pre_order(node.get_right())
+            if parent.left == node_to_remove:
+                parent.left = successor
+            elif parent.right == node_to_remove:
+                parent.right = successor
+        else:
+            # one subtree
+            successor = None
 
-    def in_order_print(self):
-        self.in_order(self.__root)
+            if node_to_remove.left:
+                successor = node_to_remove.left
+            elif node_to_remove.right:
+                successor = node_to_remove.right
 
-    def in_order(self, node):
-        # L root R
-        if node.get_left() != None:
-            self.in_order(node.get_left())
+            if parent.left == node_to_remove:
+                parent.left = successor
+            elif parent.right == node_to_remove:
+                parent.right = successor
+
+    def in_order(self):
+        # L Root R
+        if self.left != None:
+            self.left.in_order()
+
+        print(self.value, end=", ")
+
+        if self.right != None:
+            self.right.in_order()
             
-        print(node.get_value())
+if __name__ == "__main__":
+    b = BST(9)
+    b.insert(10)
+    b.insert(5)
+    b.insert(7)
+    b.insert(3)
+    b.in_order()
 
-        if node.get_right() != None:
-            self.in_order(node.get_right())
+    print("removing 5")
+    b.remove(5)
 
-    def post_order_print(self):
-        self.post_order(self.__root)
-        
-    def post_order(self, node):
-        # L R root
-        if node.get_left() != None:
-            self.post_order(node.get_left())
-
-        if node.get_right() != None:
-            self.post_order(node.get_right())
-            
-        print(node.get_value())
-
-b = BinaryTree()
-b.insert_value(4)
-b.insert_value(6)
-b.insert_value(2)
-b.insert_value(5)
-print("Pre order print")
-b.pre_order_print()
-print("In order print")
-b.in_order_print()
-print("Post order print")
-b.post_order_print()
+    b.in_order()
